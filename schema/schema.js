@@ -1,12 +1,7 @@
 const graphql = require('graphql');
-const _ = require('lodash');
+const axios = require('axios');
 
 const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema } = graphql;
-
-const users = [
-  { id: '23', firstName: 'Nikita', age: 22 },
-  { id: '47', firstName: 'Samantha', age: 21 },
-];
 
 // Какие параметры user имеет внутри себя
 const UserType = new GraphQLObjectType({
@@ -30,10 +25,15 @@ const RootQuery = new GraphQLObjectType({
       type: UserType,
       // Какие аргументы прокидывать надо
       args: { id: { type: GraphQLString } },
-      // Здесь происходит поиск данных в DB
+      // Здесь происходит поиск данных в DB (promise)
       resolve(parentValue, args) {
         // поиск первого найденного user с id = args.id
-        return _.find(users, { id: args.id });
+        return (
+          axios
+            .get(`http://localhost:3000/users/${args.id}`)
+            // axios вернет структуру { data: {...server.ans}}
+            .then((resp) => resp.data)
+        );
       },
     },
   },
