@@ -3,6 +3,15 @@ const axios = require('axios');
 
 const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema } = graphql;
 
+const CompanyType = new GraphQLObjectType({
+  name: 'Company',
+  fields: {
+    id: { type: GraphQLString },
+    name: { type: GraphQLString },
+    description: { type: GraphQLString },
+  },
+});
+
 // Какие параметры user имеет внутри себя
 const UserType = new GraphQLObjectType({
   // Имя
@@ -12,6 +21,19 @@ const UserType = new GraphQLObjectType({
     id: { type: GraphQLString },
     firstName: { type: GraphQLString },
     age: { type: GraphQLInt },
+    // Связываем user с company, чтобы граф понимал чё куда
+    company: {
+      type: CompanyType,
+      /*
+       * Так как 'company' нет у 'User', то нужно как-то ему подкинуть этот тип
+       * Поэтому мы сами делаем запрос на сервер и получаем данные
+       */
+      resolve(parentValue, args) {
+        return axios
+          .get(`http://localhost:3000/companies/${parentValue.companyId}`)
+          .then((res) => res.data);
+      },
+    },
   },
 });
 
