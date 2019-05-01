@@ -3,6 +3,7 @@ const expressGraphQL = require('express-graphql');
 const schema = require('./schema/schema');
 
 const app = express();
+const PORT = 4000;
 
 /*
   переходим на loaclhost:4000/qraphql
@@ -26,6 +27,6 @@ app.use(
   })
 );
 
-app.listen(4000, () => {
-  console.log('listening');
+app.listen(PORT, () => {
+  console.log(`listening on Port:${PORT}!`);
 });

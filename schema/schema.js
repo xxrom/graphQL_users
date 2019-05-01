@@ -58,6 +58,21 @@ const RootQuery = new GraphQLObjectType({
         );
       },
     },
+    // Ищем 'сompany'
+    company: {
+      type: CompanyType,
+      args: { id: { type: GraphQLString } },
+      // Здесь происходит поиск данных в DB (promise)
+      resolve(parentValue, args) {
+        // поиск первого найденного company с id = args.id
+        return (
+          axios
+            .get(`http://localhost:3000/companies/${args.id}`)
+            // axios вернет структуру { data: {...server.ans}}
+            .then((resp) => resp.data)
+        );
+      },
+    },
   },
 });
 
